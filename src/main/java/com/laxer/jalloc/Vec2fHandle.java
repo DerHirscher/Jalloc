@@ -16,7 +16,7 @@ public class Vec2fHandle extends StructHandle {
     private static final VarHandle Y_HANDLE = LAYOUT.varHandle(MemoryLayout.PathElement.groupElement("y"));
 
     public Vec2fHandle(long capacity) {
-        super(LAYOUT, capacity);
+        super(LAYOUT.byteSize(), capacity);
     }
 
     public long newVec2f() {

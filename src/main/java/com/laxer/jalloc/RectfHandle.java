@@ -20,7 +20,7 @@ public class RectfHandle extends StructHandle {
     private static final VarHandle H_HANDLE = LAYOUT.varHandle(MemoryLayout.PathElement.groupElement("h"));
 
     public RectfHandle(long capacity) {
-        super(LAYOUT, capacity);
+        super(LAYOUT.byteSize(), capacity);
     }
 
     public long newRectf() {
