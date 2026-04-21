@@ -21,7 +21,7 @@ public class StringHandle extends ByteHandle {
     }
 
     public StringHandle(long byteCapacity, @NotNull StringHandle.StringCharset charset, @NotNull MaxStringLength maxStringLength) {
-        super(byteCapacity);
+        super(byteCapacity, maxStringLength.bytes);
         this.charset = charset;
         this.maxLength = maxStringLength;
     }
@@ -30,14 +30,7 @@ public class StringHandle extends ByteHandle {
         Objects.requireNonNull(s);
         int strlen = s.length();
 
-        int mod = strlen % maxLength.bytes;
-        int bytePadding = 0;
-
-        if (mod != 0) {
-            bytePadding = maxLength.bytes - mod;
-        }
-
-        long str = nextBytes(maxLength.bytes + (long) (strlen + bytePadding) * charset.bytes);
+        long str = nextBytes(maxLength.bytes + (long) paddedBytes(strlen) * charset.bytes);
         setLen(str, (short) strlen);
 
         byte[] bytes = s.getBytes(charset.standardCharset);
@@ -50,13 +43,26 @@ public class StringHandle extends ByteHandle {
     }
 
     @Override
-    public void cpy(long ptr, long dest) {
+    public void cpy(long str, long dest) {
+        int totalBytes = paddedBytes(getLength(str));
+        int destBytes = paddedBytes(getLength(dest));
 
+        if (totalBytes != destBytes) {
+            throw new IllegalArgumentException("The destination must have the same length as the base string");
+        }
+        cpyBytes(str, dest, totalBytes);
+    }
+
+    public void unsafeCpy(long str, long dest) {
+        int totalBytes = paddedBytes(getLength(str));
+        cpyBytes(str, dest, totalBytes);
     }
 
     @Override
-    public long cpy(long ptr) {
-        return 0;
+    public long cpy(long str) {
+        long dest = nextBytes(paddedBytes(getLength(str)));
+        unsafeCpy(str, dest);
+        return dest;
     }
 
     public void setChar(long str, int index, char c) {
@@ -90,6 +96,15 @@ public class StringHandle extends ByteHandle {
         MemorySegment.copy(mem, str + maxLength.bytes, destSegment, 0, (long) len * charset.bytes);
 
         return new String(chars);
+    }
+
+    private int paddedBytes(int strlen) {
+        int bytes = maxLength.bytes + strlen * charset.bytes;
+
+        int mod = bytes % maxLength.bytes;
+        int padding = (mod == 0) ? 0 : (maxLength.bytes - mod);
+
+        return bytes + padding;
     }
 
     public enum StringCharset {

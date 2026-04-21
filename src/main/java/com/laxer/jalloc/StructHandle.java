@@ -7,8 +7,8 @@ import java.lang.invoke.VarHandle;
 public abstract class StructHandle extends ByteHandle {
     private final long structSize;
 
-    protected StructHandle(long structSize, long capacity) {
-        super(capacity * structSize);
+    protected StructHandle(long structSize, long capacity, long alignment) {
+        super(capacity * structSize, alignment);
         this.structSize = structSize;
     }
 
@@ -30,7 +30,7 @@ public abstract class StructHandle extends ByteHandle {
         handle.set(mem, obj * structSize, v);
     }
 
-    protected Object get(@NotNull VarHandle handle, long obj) {
-        return handle.get(mem, obj * structSize);
+    protected float getFloat(@NotNull VarHandle handle, long obj) {
+        return (float) handle.get(mem, obj * structSize);
     }
 }

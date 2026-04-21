@@ -9,8 +9,8 @@ public abstract class ByteHandle implements AutoCloseable {
 
     private long current = 0;
 
-    protected ByteHandle(long capacity) {
-        mem = arena.allocate(capacity);
+    protected ByteHandle(long capacity, long alignment) {
+        mem = arena.allocate(capacity, alignment);
     }
 
     protected final long nextBytes(long bytes) {

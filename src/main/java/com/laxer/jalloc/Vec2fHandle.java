@@ -16,7 +16,7 @@ public class Vec2fHandle extends StructHandle {
     private static final VarHandle Y_HANDLE = LAYOUT.varHandle(MemoryLayout.PathElement.groupElement("y"));
 
     public Vec2fHandle(long capacity) {
-        super(LAYOUT.byteSize(), capacity);
+        super(LAYOUT.byteSize(), capacity, LAYOUT.byteAlignment());
     }
 
     public long newVec2f() {
@@ -43,11 +43,11 @@ public class Vec2fHandle extends StructHandle {
     }
 
     public float getX(long vec) {
-        return (float) get(X_HANDLE, vec);
+        return (float) getFloat(X_HANDLE, vec);
     }
 
     public float getY(long vec) {
-        return (float) get(Y_HANDLE, vec);
+        return (float) getFloat(Y_HANDLE, vec);
     }
 
     public void addTo(long dest, long vec2) {

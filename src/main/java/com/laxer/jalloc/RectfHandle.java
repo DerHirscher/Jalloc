@@ -20,7 +20,7 @@ public class RectfHandle extends StructHandle {
     private static final VarHandle H_HANDLE = LAYOUT.varHandle(MemoryLayout.PathElement.groupElement("h"));
 
     public RectfHandle(long capacity) {
-        super(LAYOUT.byteSize(), capacity);
+        super(LAYOUT.byteSize(), capacity, LAYOUT.byteAlignment());
     }
 
     public long newRectf() {
@@ -69,19 +69,19 @@ public class RectfHandle extends StructHandle {
     }
 
     public float getX(long rect) {
-        return (float) get(X_HANDLE, rect);
+        return (float) getFloat(X_HANDLE, rect);
     }
 
     public float getY(long rect) {
-        return (float) get(Y_HANDLE, rect);
+        return (float) getFloat(Y_HANDLE, rect);
     }
 
     public float getWidth(long rect) {
-        return (float) get(W_HANDLE, rect);
+        return (float) getFloat(W_HANDLE, rect);
     }
 
     public float getHeight(long rect) {
-        return (float) get(H_HANDLE, rect);
+        return (float) getFloat(H_HANDLE, rect);
     }
 
     public float area(long rect) {
