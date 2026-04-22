@@ -14,7 +14,7 @@ public abstract class ByteHandle implements AutoCloseable {
     }
 
     protected final long nextBytes(long bytes) {
-        if (current + bytes >= mem.byteSize()) {
+        if (current + bytes > mem.byteSize()) {
             throw new OutOfMemoryException("The device has run out of free memory. Please increase the capacity.");
         }
         long ptr = current;
@@ -23,9 +23,7 @@ public abstract class ByteHandle implements AutoCloseable {
     }
 
     protected final void cpyBytes(long ptr, long dest, long bytes) {
-        long srcOff = ptr * bytes;
-        long destOff = dest * bytes;
-        MemorySegment.copy(mem, srcOff, mem, destOff, bytes);
+        MemorySegment.copy(mem, ptr, mem, dest, bytes);
     }
 
     protected final long cpyBytes(long ptr, long bytes) {
@@ -37,6 +35,15 @@ public abstract class ByteHandle implements AutoCloseable {
     public abstract void cpy(long ptr, long dest);
 
     public abstract long cpy(long ptr);
+
+    protected final boolean equalsBytes(long ptr1, long ptr2, long bytes) {
+        return ptr1 == ptr2 || MemorySegment.mismatch(
+                mem, ptr1, ptr1 + bytes,
+                mem, ptr2, ptr2 + bytes
+        ) == -1;
+    }
+
+    public abstract boolean equals(long ptr1, long ptr2);
 
     public void clear() {
         current = 0;

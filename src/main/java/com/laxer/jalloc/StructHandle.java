@@ -18,12 +18,17 @@ public abstract class StructHandle extends ByteHandle {
 
     @Override
     public void cpy(long obj, long dest) {
-        cpyBytes(obj, dest, structSize);
+        cpyBytes(obj * structSize, dest * structSize, structSize);
     }
 
     @Override
     public long cpy(long obj) {
-        return cpyBytes(obj, structSize);
+        return cpyBytes(obj * structSize, structSize);
+    }
+
+    @Override
+    public boolean equals(long obj1, long obj2) {
+        return equalsBytes(obj1 * structSize, obj2 * structSize, structSize);
     }
 
     protected void setFloat(@NotNull VarHandle handle, long obj, float v) {
