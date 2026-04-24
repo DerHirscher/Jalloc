@@ -21,6 +21,7 @@ public class LinkedIntListHandle extends LinkedListHandle {
         };
     }
 
+
     public void add(long list, int value) {
         long node = nodeHandle.newNode(value);
 
