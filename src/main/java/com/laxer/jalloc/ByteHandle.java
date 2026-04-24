@@ -1,9 +1,13 @@
 package com.laxer.jalloc;
 
+import com.laxer.jalloc.util.OutOfMemoryException;
+
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 
 public abstract class ByteHandle implements AutoCloseable {
+    public static final long NULL = -1;
+
     protected final MemorySegment mem;
     private final Arena arena = Arena.ofConfined();
 
@@ -14,6 +18,10 @@ public abstract class ByteHandle implements AutoCloseable {
     }
 
     protected final long nextBytes(long bytes) {
+        if (bytes <= 0) {
+            throw new IllegalArgumentException("You can not allocate a negative amount of bytes.");
+        }
+
         if (current + bytes > mem.byteSize()) {
             throw new OutOfMemoryException("The device has run out of free memory. Please increase the capacity.");
         }
@@ -53,5 +61,10 @@ public abstract class ByteHandle implements AutoCloseable {
     public void close() {
         clear();
         arena.close();
+    }
+
+    public static long requireNonNull(long ptr) {
+        if (ptr == NULL) throw new NullPointerException("The pointer is NULL");
+        return ptr;
     }
 }

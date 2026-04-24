@@ -22,7 +22,7 @@ public class StringHandle extends ByteHandle {
 
     public long newEmptyString(int maxStrLen) {
         if (maxStrLen > type.maxlen) {
-            throw new IllegalArgumentException("The input exceeds the maximum string length");
+            throw new IllegalArgumentException("The input exceeds the maximum string length.");
         }
 
         long str = nextBytes(paddedBytes(maxStrLen));
@@ -44,7 +44,7 @@ public class StringHandle extends ByteHandle {
 
     private long newString(int strlen, byte[] bytes) {
         if (strlen > type.maxlen) {
-            throw new IllegalArgumentException("The input exceeds the maximum string length");
+            throw new IllegalArgumentException("The input exceeds the maximum string length.");
         }
 
         long str = nextBytes(paddedBytes(strlen));
@@ -66,7 +66,7 @@ public class StringHandle extends ByteHandle {
         int destBytes = paddedBytes(len(dest));
 
         if (totalBytes > destBytes) {
-            throw new IllegalArgumentException("The length of the destination must be greater or equal than the base string");
+            throw new IllegalArgumentException("The length of the destination must be greater or equal than the base string.");
         }
         cpyBytes(str, dest, totalBytes);
     }
@@ -282,7 +282,7 @@ public class StringHandle extends ByteHandle {
         int destLen = str1Len + str2Len;
 
         if (paddedBytes(destLen) > paddedBytes(len(dest))) {
-            throw new IllegalArgumentException("The length of the destination must must be greater or equal the length of the concatenation");
+            throw new IllegalArgumentException("The length of the destination must must be greater or equal the length of the concatenation.");
         }
 
         concat0(str1, str2, dest, str1Len, str2Len, destLen);
@@ -304,6 +304,43 @@ public class StringHandle extends ByteHandle {
 
         concat0(str1, str2, dest, str1Len, str2Len, destLen);
         return dest;
+    }
+
+    public void substring(long str, int beginIndex, long dest) {
+        substring(str, beginIndex, len(str), dest);
+    }
+
+    public void substring(long str, int beginIndex, int endIndex, long dest) {
+        int substrlen = endIndex - beginIndex;
+
+        if (paddedBytes(substrlen) > paddedBytes(len(dest))) {
+            throw new IllegalArgumentException("The length of the destination must must be greater or equal the length of the substring.");
+        }
+        unsafeSubstring(str, beginIndex, endIndex, dest);
+    }
+
+    public void unsafeSubstring(long str, int beginIndex, int endIndex, long dest) {
+        int substrlen = endIndex - beginIndex;
+        setLen(dest, substrlen);
+        cpyBytes(str + type.headerBytes + ((long) beginIndex * type.charBytes), dest + type.headerBytes, (long) substrlen * type.charBytes);
+    }
+
+    public long substring(long str, int beginIndex) {
+        return substring(str, beginIndex, len(str));
+    }
+
+    public long substring(long str, int beginIndex, int endIndex) {
+        long substr = nextBytes(paddedBytes(endIndex - beginIndex));
+        unsafeSubstring(str, beginIndex, endIndex, substr);
+        return substr;
+    }
+
+    public void thisToSubstring(long str, int beginIndex) {
+        thisToSubstring(str, beginIndex, len(str));
+    }
+
+    public void thisToSubstring(long str, int beginIndex, int endIndex) {
+        unsafeSubstring(str, beginIndex, endIndex, str);
     }
 
     public String toString(long str) {
@@ -339,7 +376,7 @@ public class StringHandle extends ByteHandle {
         //ASCII encoding, max String length 255, aligned bytes
         SHORT_ASCII(1, 1, StandardCharsets.US_ASCII),
 
-        //ASCII encoding, max String length 65.535, aligned bytes, faster, but could use more storage
+        //ASCII encoding, max String length 65.535, aligned bytes, faster, but uses more storage
         LONG_ASCII_ALIGNED(2, 1, StandardCharsets.US_ASCII),
 
         //ASCII encoding, max String length 65.535, unaligned bytes, uses less storage, but is a bit slower
@@ -349,8 +386,7 @@ public class StringHandle extends ByteHandle {
         SHORT_UTF16(1, 2, StandardCharsets.UTF_16LE),
 
         //UTF16 encoding, max String length 65.535, aligned bytes
-        LONG_UTF16(2, 2, StandardCharsets.UTF_16LE),
-        ;
+        LONG_UTF16(2, 2, StandardCharsets.UTF_16LE);
 
         private final int headerBytes;
         private final int charBytes;

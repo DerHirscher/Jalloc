@@ -24,7 +24,7 @@ public class Vec2fHandle extends StructHandle {
     }
 
     public long newVec2f(float x, float y) {
-        long vec = next();
+        long vec = nextStruct();
         set(vec, x, y);
         return vec;
     }
@@ -35,11 +35,11 @@ public class Vec2fHandle extends StructHandle {
     }
 
     public void setX(long vec, float x) {
-        setFloat(X_HANDLE, vec, x);
+        set(X_HANDLE, vec, x);
     }
 
     public void setY(long vec, float y) {
-        setFloat(Y_HANDLE, vec, y);
+        set(Y_HANDLE, vec, y);
     }
 
     public float getX(long vec) {
@@ -59,7 +59,7 @@ public class Vec2fHandle extends StructHandle {
     }
 
     public long add(long vec1, long vec2) {
-        long dest = next();
+        long dest = nextStruct();
         add(vec1, vec2, dest);
         return dest;
     }
@@ -73,7 +73,7 @@ public class Vec2fHandle extends StructHandle {
     }
 
     public long scl(long vec, float scl) {
-        long dest = next();
+        long dest = nextStruct();
         scl(vec, scl, dest);
         return dest;
     }
@@ -97,7 +97,7 @@ public class Vec2fHandle extends StructHandle {
     }
 
     public long normalize(long vec) {
-        long dest = next();
+        long dest = nextStruct();
         normalize(vec, dest);
         return dest;
     }

@@ -32,7 +32,7 @@ public class RectfHandle extends StructHandle {
     }
 
     public long newRectf(float x, float y, float w, float h) {
-        long rect = next();
+        long rect = nextStruct();
         set(rect, x, y, w, h);
         return rect;
     }
@@ -53,19 +53,19 @@ public class RectfHandle extends StructHandle {
     }
 
     public void setX(long rect, float x) {
-        setFloat(X_HANDLE, rect, x);
+        set(X_HANDLE, rect, x);
     }
 
     public void setY(long rect, float y) {
-        setFloat(Y_HANDLE, rect, y);
+        set(Y_HANDLE, rect, y);
     }
 
     public void setWidth(long rect, float w) {
-        setFloat(W_HANDLE, rect, w);
+        set(W_HANDLE, rect, w);
     }
 
     public void setHeight(long rect, float h) {
-        setFloat(H_HANDLE, rect, h);
+        set(H_HANDLE, rect, h);
     }
 
     public float getX(long rect) {
